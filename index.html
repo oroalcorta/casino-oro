@@ -19,8 +19,8 @@
     }
     h1 {
       color: gold;
-      font-size: 10rem;
-      margin: 2rem 0;
+      font-size: 4rem;
+      margin: 2rem 0 1rem 0;
     }
     input {
       width: 90%;
@@ -76,15 +76,21 @@
       margin: auto;
     }
     #fechaHoraActual {
-      font-size: 2rem;
+      font-size: 1.5rem;
       color: white;
-      margin: 20px 0;
+      margin: 10px 0;
       font-weight: bold;
     }
     #userLabel {
-      font-size: 2.5rem;
-      margin: 20px 0;
+      font-size: 2rem;
+      margin: 10px 0;
       font-weight: bold;
+    }
+    #casinoHeader {
+      font-size: 2.5rem;
+      font-weight: bold;
+      color: gold;
+      margin-top: 1rem;
     }
     #result {
       font-size: 1.8rem;
@@ -92,14 +98,14 @@
       margin-top: 1rem;
     }
     .info-box {
-      position: fixed;
-      bottom: 20px;
-      width: 90%;
-      left: 5%;
+      margin-top: 2rem;
       background: white;
       color: black;
       border-radius: 10px;
       padding: 1rem;
+      width: 90%;
+      margin-left: auto;
+      margin-right: auto;
     }
   </style>
 </head>
@@ -116,7 +122,8 @@
     </div>
   </div>
 
-  <div id="wheelSection" style="display: none; position: relative;">
+  <div id="wheelSection" style="display: none;">
+    <div id="casinoHeader">CASINO ORO</div>
     <div id="userLabel"></div>
     <div id="fechaHoraActual"></div>
     <div id="arrow"></div>
@@ -130,7 +137,6 @@
 
 <audio id="spinSound" src="https://www.soundjay.com/misc/sounds/slot-machine-1.mp3"></audio>
 <audio id="winSound" src="https://www.soundjay.com/human/sounds/applause-8.mp3"></audio>
-<audio id="loseSound" src="https://www.soundjay.com/human/sounds/crying-baby-1.mp3"></audio>
 
 <script>
   const premios = [
@@ -192,18 +198,9 @@
   }
 
   document.getElementById("spin").addEventListener("click", () => {
-    const lastSpin = localStorage.getItem("ultimaGirada");
-    const today = new Date().toISOString().split('T')[0];
-
-    if (lastSpin === today) {
-      document.getElementById("result").innerHTML = `⛔️ YA GIRASTE HOY<br>📆 VOLVÉ MAÑANA 🙏`;
-      return;
-    }
-
     document.getElementById("result").innerHTML = "";
     const spinSound = document.getElementById("spinSound");
     const winSound = document.getElementById("winSound");
-    const loseSound = document.getElementById("loseSound");
     spinSound.play();
 
     let totalProb = premios.reduce((a, p) => a + p.prob, 0);
@@ -226,14 +223,7 @@
 
     setTimeout(() => {
       const premio = premios[selected];
-
-      // Guardar fecha solo si NO es "OTRO GIRO"
-      if (!premio.label.includes("OTRO GIRO")) {
-        localStorage.setItem("ultimaGirada", today);
-      }
-
       if (premio.label.includes("SIN PREMIO")) {
-        loseSound.play();
         document.getElementById("result").innerHTML = `😞 NO GANASTE ESTA VEZ... ¡PROBÁ MAÑANA!`;
       } else {
         winSound.play();
