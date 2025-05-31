@@ -165,6 +165,7 @@
     let username = "";
     let extraSpinUsed = false;
     let fpId = null;
+    let isSpinning = false;
 
     FingerprintJS.load().then(fp => {
       fp.get().then(result => {
@@ -215,6 +216,9 @@
     }
 
     document.getElementById("spin").addEventListener("click", () => {
+      if (isSpinning) return;
+
+      const spinBtn = document.getElementById("spin");
       const result = document.getElementById("result");
       result.style.display = "block";
 
@@ -223,15 +227,19 @@
         return;
       }
 
+      const fallbackId = fpId || 'fallback';
       const today = new Date().toLocaleDateString();
-      const lastSpin = localStorage.getItem(`lastSpinDate-oro-${fpId}`);
+      const lastSpin = localStorage.getItem(`lastSpinDate-oro-${fallbackId}`);
 
       if (lastSpin === today && !extraSpinUsed) {
         result.innerHTML = `❌‼️ YA USASTE TU GIRO HOY ‼️❌, VOLVÉ MAÑANA😁🎰.`;
         return;
       }
 
+      isSpinning = true;
+      spinBtn.disabled = true;
       result.innerHTML = "";
+
       const spinSound = document.getElementById("spinSound");
       const winSound = document.getElementById("winSound");
       spinSound.play();
@@ -258,20 +266,23 @@
         const premio = premios[selected];
         if (premio.label.includes("SIN PREMIO")) {
           result.innerHTML = `😞 NO GANASTE ESTA VEZ... ¡PROBÁ MAÑANA!`;
-          localStorage.setItem(`lastSpinDate-oro-${fpId}`, today);
+          localStorage.setItem(`lastSpinDate-oro-${fallbackId}`, today);
         } else if (premio.label.includes("OTRO GIRO")) {
           if (!extraSpinUsed) {
             result.innerHTML = `🔁 TENÉS UNA SEGUNDA OPORTUNIDAD, ¡APROVECHALA!`;
             extraSpinUsed = true;
           } else {
             result.innerHTML = `😞 YA USASTE TU OPORTUNIDAD EXTRA. VOLVÉ MAÑANA.`;
-            localStorage.setItem(`lastSpinDate-oro-${fpId}`, today);
+            localStorage.setItem(`lastSpinDate-oro-${fallbackId}`, today);
           }
         } else {
           winSound.play();
           result.innerHTML = `🎉 <strong>¡FELICIDADES!</strong> GANASTE: <strong>${premio.label.toUpperCase()}</strong> 🎊`;
-          localStorage.setItem(`lastSpinDate-oro-${fpId}`, today);
+          localStorage.setItem(`lastSpinDate-oro-${fallbackId}`, today);
         }
+
+        isSpinning = false;
+        spinBtn.disabled = false;
       }, 6100);
     });
   </script>
