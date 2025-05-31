@@ -1,31 +1,26 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CASINO SHELBY</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>CASINO ORO</title>
   <style>
-    html, body {
+    body {
       margin: 0;
-      padding: 0;
-      min-height: 100vh;
-      background: linear-gradient(to bottom, #1c1c1c, #333, #111);
-      color: #f5f5f5;
+      background-color: black;
+      color: white;
       font-family: 'Arial Black', sans-serif;
       text-align: center;
     }
     .container {
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
+      max-width: 100%;
+      margin: auto;
       padding: 20px;
     }
     h1 {
-      color: #bfa46f;
+      color: gold;
       font-size: 4rem;
       margin: 2rem 0 1rem 0;
-      text-shadow: 2px 2px 4px #00000088;
     }
     input {
       width: 90%;
@@ -33,13 +28,11 @@
       font-size: 1.2rem;
       margin: 10px 0;
       border-radius: 10px;
-      border: 2px solid #555;
+      border: none;
       text-align: center;
-      background-color: #222;
-      color: #fff;
     }
     button {
-      background-color: #bfa46f;
+      background-color: gold;
       color: black;
       font-size: 1.3rem;
       font-weight: bold;
@@ -48,25 +41,14 @@
       border-radius: 10px;
       margin: 1rem 0;
       cursor: pointer;
-      box-shadow: 2px 2px 6px #00000088;
     }
-    #claimTextBox, #resultBox {
-      background-color: #f5f5f5;
-      color: #000;
-      padding: 1rem;
-      margin: 1rem auto;
-      border-radius: 10px;
-      width: 90%;
-      max-width: 500px;
-      box-shadow: 2px 2px 6px #00000088;
-      font-size: 1.2rem;
+    #claimText {
+      margin-top: 1rem;
+      font-size: 1.1rem;
       font-weight: bold;
     }
-    #resultBox {
-      display: none;
-    }
     .whatsapp {
-      background-color: #444;
+      background-color: #25D366;
       color: white;
       padding: 0.8rem 1.5rem;
       border-radius: 10px;
@@ -74,13 +56,12 @@
       font-weight: bold;
       display: inline-block;
       margin-top: 1rem;
-      box-shadow: 2px 2px 6px #00000088;
     }
     canvas {
       width: 80vw;
       max-width: 360px;
       height: auto;
-      border: 8px solid #bfa46f;
+      border: 8px solid white;
       border-radius: 50%;
       margin: 1rem auto;
       display: block;
@@ -91,63 +72,68 @@
       height: 0;
       border-left: 15px solid transparent;
       border-right: 15px solid transparent;
-      border-top: 25px solid #bfa46f;
+      border-top: 25px solid red;
       margin: auto;
     }
-    #fechaHoraActual, #userLabel, #casinoHeader {
-      font-weight: bold;
-      margin: 10px 0;
-    }
-    #fechaHoraActual, #userLabel {
-      color: #ddd;
+    #fechaHoraActual {
       font-size: 1.3rem;
+      color: white;
+      margin: 10px 0;
+      font-weight: bold;
+    }
+    #userLabel {
+      font-size: 1.6rem;
+      margin: 10px 0;
+      font-weight: bold;
     }
     #casinoHeader {
       font-size: 2rem;
-      color: #bfa46f;
-      text-shadow: 1px 1px 2px #00000066;
+      font-weight: bold;
+      color: gold;
+      margin-top: 1rem;
     }
-    .info-box-wrapper {
-      margin-top: 250px;
+    #result {
+      font-size: 1.5rem;
+      font-weight: bold;
+      margin-top: 1rem;
     }
     .info-box {
-      background: #f5f5f5;
-      color: #000;
-      border-radius: 10px;
-      padding: 1rem;
-      width: 90%;
-      margin: 0 auto;
-      box-shadow: 2px 2px 6px #00000088;
-    }
+    background: white;
+    color: black;
+    border-radius: 10px;
+    padding: 1rem;
+    width: 90%;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 40vh; /* AJUSTADO de 80vh a 40vh */
+    transform: translateY(-40%);
+  }
+</style>
   </style>
 </head>
 <body>
   <div class="container">
-    <div id="userSection" style="display: flex; flex-direction: column; flex: 1;">
-      <div>
-        <h1>CASINO SHELBY</h1>
-        <input id="usernameInput" placeholder="INGRESÁ TU USUARIO">
-        <button onclick="startGame()">CONTINUAR</button>
-      </div>
-      <div class="info-box-wrapper">
-        <div class="info-box">
-          <strong style="font-size: 1.5rem;">CASINO SHELBY</strong><br>
-          LA CASA SIEMPRE PAGA, ACTIVOS 24HS.<br><br>
-          <a class="whatsapp" href="https://wa.me/5491144203751" target="_blank">📱 CONTACTANOS AQUÍ</a>
-        </div>
+    <div id="userSection">
+      <h1>CASINO ORO</h1>
+      <input id="usernameInput" placeholder="INGRESÁ TU USUARIO" />
+      <button onclick="startGame()">CONTINUAR</button>
+      <div class="info-box">
+        <strong style="font-size: 1.5rem;">CASINO ORO</strong><br />
+        LINEA ACTIVA LAS 24HS, SE PAGAN TODOS LOS PREMIOS SIN IMPORTAR EL MONTO.<br /><br />
+        <a class="whatsapp" href="https://wa.me/5491139432743" target="_blank">📱 CONTACTANOS AQUÍ</a>
       </div>
     </div>
 
     <div id="wheelSection" style="display: none;">
-      <div id="casinoHeader">CASINO SHELBY</div>
+      <div id="casinoHeader">CASINO ORO</div>
       <div id="userLabel"></div>
       <div id="fechaHoraActual"></div>
       <div id="arrow"></div>
       <canvas id="canvas" width="500" height="500"></canvas>
       <button id="spin">🎰 GIRAR LA RULETA 🎰</button>
-      <div id="resultBox"></div>
-      <div id="claimTextBox">📸 SACÁ CAPTURA Y RECLAMÁ TU PREMIOPREMIO😉</div>
-      <a class="whatsapp" href="https://wa.me/5491144203751" target="_blank">📸 RECLAMAR POR WHATSAPP</a>
+      <div id="result"></div>
+      <div id="claimText">📸 SACÁ CAPTURA Y RECLAMÁ TU PREMIOPREMIO😉</div>
+      <a class="whatsapp" href="https://wa.me/5491139432743" target="_blank">📸 RECLAMAR POR WHATSAPP</a>
     </div>
   </div>
 
@@ -156,14 +142,14 @@
 
   <script>
     const premios = [
-      { label: "💼 200% BONIF.", color: "#bfa46f", prob: 1 },
-      { label: "🥃 2.500 GRATIS", color: "#9933ff", prob: 23 },
-      { label: "🎩 100% BONIF.", color: "#FFD700", prob: 9 },
-      { label: "🧨 OTRO GIRO", color: "#00ccff", prob: 0 },
-      { label: "🔫 10.000 GRATIS", color: "#ff6600", prob: 3 },
-      { label: "💰 50% BONIF.", color: "#00cc44", prob: 23 },
+      { label: "🌟 50.000 GRATIS", color: "#ff33cc", prob: 0 },
+      { label: "🎊 2.500 GRATIS", color: "#9933ff", prob: 20 },
+      { label: "🎉 100% BONIF.", color: "#FFD700", prob: 9 },
+      { label: "🔁 OTRO GIRO", color: "#00ccff", prob: 9 },
+      { label: "🎁 10.000 GRATIS", color: "#ff6600", prob: 3 },
+      { label: "💵 50% BONIF.", color: "#00cc44", prob: 20 },
       { label: "🚫 SIN PREMIO", color: "#555555", prob: 9 },
-      { label: "👞 20% BONIF.", color: "#ff9900", prob: 33 }
+      { label: "💰 20% BONIF.", color: "#ff9900", prob: 30 }
     ];
 
     const canvas = document.getElementById("canvas");
@@ -215,17 +201,14 @@
     }
 
     document.getElementById("spin").addEventListener("click", () => {
-      const lastSpin = localStorage.getItem("lastSpinDate-shelby");
+      const lastSpin = localStorage.getItem("lastSpinDate");
       const today = new Date().toLocaleDateString();
-      const resultBox = document.getElementById("resultBox");
-      resultBox.style.display = "block";
-
       if (lastSpin === today && !extraSpinUsed) {
-        resultBox.innerHTML = `❌‼️ YA USASTE TU GIRO HOY ‼️❌, VOLVÉ MAÑANA😁🎰.`;
+        document.getElementById("result").innerHTML = `❌‼️ YA USASTE TU GIRO HOY ‼️❌, VOLVÉ MAÑANA😁🎰.`;
         return;
       }
 
-      resultBox.innerHTML = "";
+      document.getElementById("result").innerHTML = "";
       const spinSound = document.getElementById("spinSound");
       const winSound = document.getElementById("winSound");
       spinSound.play();
@@ -251,15 +234,15 @@
       setTimeout(() => {
         const premio = premios[selected];
         if (premio.label.includes("SIN PREMIO")) {
-          resultBox.innerHTML = `😞 NO GANASTE ESTA VEZ... ¡PROBÁ MAÑANA!`;
-          localStorage.setItem("lastSpinDate-shelby", today);
+          document.getElementById("result").innerHTML = `😞 NO GANASTE ESTA VEZ... ¡PROBÁ MAÑANA!`;
+          localStorage.setItem("lastSpinDate", today);
         } else if (premio.label.includes("OTRO GIRO")) {
-          resultBox.innerHTML = `🧨 TENÉS UNA SEGUNDA OPORTUNIDAD, ¡APROVECHALA!`;
+          document.getElementById("result").innerHTML = `🔁 TENÉS UNA SEGUNDA OPORTUNIDAD, ¡APROVECHALA!`;
           extraSpinUsed = true;
         } else {
           winSound.play();
-          resultBox.innerHTML = `🎉 <strong>¡FELICIDADES!</strong> GANASTE: <strong>${premio.label.toUpperCase()}</strong> 🎊`;
-          localStorage.setItem("lastSpinDate-shelby", today);
+          document.getElementById("result").innerHTML = `🎉 <strong>¡FELICIDADES!</strong> GANASTE: <strong>${premio.label.toUpperCase()}</strong> 🎊`;
+          localStorage.setItem("lastSpinDate", today);
         }
       }, 6100);
     });
