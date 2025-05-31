@@ -130,7 +130,7 @@
     <canvas id="canvas" width="500" height="500"></canvas>
     <button id="spin">🎰 GIRAR LA RULETA 🎰</button>
     <div id="result"></div>
-    <div id="claimText">📸 SACÁ CAPTURA Y RECLAMÁ TU PREMIO</div>
+    <div id="claimText">📸 SACÁ CAPTURA Y RECLAMÁ TU PREMIOPREMIO😉</div>
     <a class="whatsapp" href="https://wa.me/5491139432743" target="_blank">📸 RECLAMAR POR WHATSAPP</a>
   </div>
 </div>
@@ -154,6 +154,7 @@
   const ctx = canvas.getContext("2d");
   const radius = canvas.width / 2;
   let username = "";
+  let extraSpinUsed = false;
 
   function drawWheel() {
     const arc = 2 * Math.PI / premios.length;
@@ -198,6 +199,13 @@
   }
 
   document.getElementById("spin").addEventListener("click", () => {
+    const lastSpin = localStorage.getItem("lastSpinDate");
+    const today = new Date().toLocaleDateString();
+    if (lastSpin === today && !extraSpinUsed) {
+      document.getElementById("result").innerHTML = `❌‼️ YA USASTE TU GIRO HOY ‼️❌, VOLVÉ MAÑANA😁🎰.`;
+      return;
+    }
+
     document.getElementById("result").innerHTML = "";
     const spinSound = document.getElementById("spinSound");
     const winSound = document.getElementById("winSound");
@@ -225,9 +233,14 @@
       const premio = premios[selected];
       if (premio.label.includes("SIN PREMIO")) {
         document.getElementById("result").innerHTML = `😞 NO GANASTE ESTA VEZ... ¡PROBÁ MAÑANA!`;
+        localStorage.setItem("lastSpinDate", today);
+      } else if (premio.label.includes("OTRO GIRO")) {
+        document.getElementById("result").innerHTML = `🔁 TENÉS UNA SEGUNDA OPORTUNIDAD, ¡APROVECHALA!`;
+        extraSpinUsed = true;
       } else {
         winSound.play();
         document.getElementById("result").innerHTML = `🎉 <strong>¡FELICIDADES!</strong> GANASTE: <strong>${premio.label.toUpperCase()}</strong> 🎊`;
+        localStorage.setItem("lastSpinDate", today);
       }
     }, 6100);
   });
