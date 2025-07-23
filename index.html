@@ -142,20 +142,32 @@
   const ua = navigator.userAgent || navigator.vendor || window.opera;
   const esIOS = /iPad|iPhone|iPod/.test(ua);
   const esSafari = /^((?!chrome|android).)*safari/i.test(ua);
+  const esMacSafari = /Macintosh/.test(ua) && esSafari;
 
-  if (esIOS && esSafari) {
-    // Redirigir con mensaje
-    document.body.innerHTML = `
-      <div style="text-align:center; color:white; padding:50px;">
-        <h2>🚫 Este juego no funciona en Safari</h2>
-        <p style="font-size: 1.2rem; max-width: 500px; margin: auto;">
-          Por favor abrí este link desde <strong>Google Chrome</strong> para poder jugar:
-        </p>
-        <input value="https://oroalcorta.github.io/casino-oro/" style="margin-top:20px; padding:10px; font-size:16px; width:90%;" readonly onclick="this.select()" />
-        <p style="margin-top:20px; font-size: 1rem;">Copiá el enlace y pegalo en Chrome para continuar. ¡Gracias! 🙌</p>
-      </div>
-    `;
-    throw new Error("⛔ Bloqueado en Safari iOS");
+  const linkNormal = "https://oroalcorta.github.io/casino-oro/";
+  const linkChrome = "googlechrome://oroalcorta.github.io/casino-oro/";
+
+  if ((esIOS && esSafari) || esMacSafari) {
+    // Intenta redirigir a Chrome
+    const redirigido = setTimeout(() => {
+      // Si no se redirigió, mostrar mensaje manual
+      document.body.innerHTML = `
+        <div style="text-align:center; color:white; padding:50px;">
+          <h2>🚫 Este juego no funciona en Safari</h2>
+          <p style="font-size: 1.2rem; max-width: 500px; margin: auto;">
+            Por favor abrí este link desde <strong>Google Chrome</strong> para poder jugar:
+          </p>
+          <input value="${linkNormal}" style="margin-top:20px; padding:10px; font-size:16px; width:90%;" readonly onclick="this.select()" />
+          <p style="margin-top:20px; font-size: 1rem;">Copiá el enlace, abrí Google Chrome y pegalo en la barra. ¡Gracias! 🙌</p>
+        </div>
+      `;
+    }, 1500);
+
+    // Intenta abrir en Chrome
+    window.location.href = linkChrome;
+
+    // Cancelamos todo lo demás del juego
+    throw new Error("⛔ Bloqueado en Safari");
   }
 })();
 </script>
