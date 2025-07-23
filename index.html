@@ -137,6 +137,23 @@
   </style>
 </head>
 <body>
+  <!-- ⛔️ Agregar este bloque APENAS comienza el <body>, para bloquear Safari incógnito al instante -->
+<script>
+// Bloqueo Safari en modo incógnito (inmediato y eficaz)
+(() => {
+  const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+  let isPrivate = false;
+
+  try { window.openDatabase(null, null, null, null); } catch (_) { isPrivate = true; }
+  try { localStorage.setItem('test', '1'); localStorage.removeItem('test'); } catch (_) { isPrivate = true; }
+
+  if (isSafari && isPrivate) {
+    alert("🚫 No podés jugar desde Safari en modo incógnito. Usá otro navegador o desactivá el modo privado.");
+    document.body.innerHTML = "<h2 style='color: white; text-align: center; margin-top: 50px;'>🚫 No podés jugar desde Safari en modo incógnito.</h2>";
+    throw new Error("⛔ Bloqueado por Safari en incógnito");
+  }
+})();
+</script>
   <div class="container">
     <div id="userSection">
       <h1>👑✨ CASINO ORO 💎🏆</h1>
@@ -214,7 +231,9 @@
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Indwb3V0amtsamtyYmxpaWthemtoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTI5ODAxMjAsImV4cCI6MjA2ODU1NjEyMH0.8aZys2dBiNbLis7ls7ZwiBt25eWbsSvSzjpO21Al2r8';
 const client = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-const hoy = new Date().toISOString().split('T')[0];
+const hoy = new Date(Date.now() - (new Date().getTimezoneOffset() * 60000))
+  .toISOString()
+  .split('T')[0];
 let fingerprint = "";
 let username = "";
 let casino = "CASINO ORO"; // 👈 CAMBIALO según el casino actual
@@ -222,14 +241,16 @@ let fpReady = FingerprintJS.load().then(fp => fp.get().then(result => {
   fingerprint = result.visitorId;
 }));
 
-async function yaJugoHoy(usuario) {
+async function yaJugoHoy() {
+  await fpReady;
+  while (!fingerprint) await new Promise(r => setTimeout(r, 50));
   try {
     const { data, error } = await client
       .from('giros')
       .select('premio, usuario')
       .eq('fecha', hoy)
-      .eq('casino', casino) // ✅ Agregás este filtro para que bloquee por casino
-      .or(`usuario.eq.${usuario},fingerprint.eq.${fingerprint}`)
+      .eq('casino', casino)
+      .or(`usuario.eq.${username},fingerprint.eq.${fingerprint}`)
       .limit(1)
       .maybeSingle();
 
@@ -263,9 +284,6 @@ async function startGame() {
   const input = document.getElementById("usernameInput");
   username = input.value.trim();
   if (!username) return input.style.border = "3px solid red";
-
-  await fpReady;
-  while (!fingerprint) await new Promise(res => setTimeout(res, 50));
 
   premioYaJugado = await yaJugoHoy();
 
