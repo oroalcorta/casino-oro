@@ -138,53 +138,26 @@
 </head>
 <body>
 <script>
-// 🛡️ Bloqueo de Safari en incógnito (reforzado y más confiable)
+// 🚫 Bloqueo moderno y confiable de incógnito (Safari o cualquiera)
+let fingerprint = "";
 (async () => {
-  const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
-  console.log("🧪 Navegador detectado:", navigator.userAgent);
-  console.log("🧪 ¿Es Safari?", isSafari);
-  if (!isSafari) return;
-
-  let isPrivate = false;
-
   try {
-    // indexedDB falla en incógnito Safari
-    const db = indexedDB.open('test');
-    let resolved = false;
+    const fp = await FingerprintJS.load();
+    const result = await fp.get();
+    fingerprint = result.visitorId;
 
-    db.onerror = () => {
-      if (!resolved) {
-        console.log("🧪 indexedDB da error → modo incógnito confirmado");
-        isPrivate = true;
-        resolved = true;
-      }
-    };
-
-    db.onsuccess = () => {
-      if (!resolved) {
-        console.log("🧪 indexedDB funciona bien → no es incógnito");
-        resolved = true;
-      }
-    };
-
-    // Si no responde nada en 200ms asumimos incógnito
-    await new Promise(resolve => setTimeout(resolve, 200));
-    if (!resolved) {
-      console.log("🧪 Sin respuesta de indexedDB → asumimos incógnito");
-      isPrivate = true;
+    console.log("🧪 Fingerprint:", fingerprint);
+    if (!fingerprint || fingerprint.length < 5) {
+      throw new Error("❌ Fingerprint no válido");
     }
   } catch (e) {
-    console.log("🧪 Excepción:", e);
-    isPrivate = true;
-  }
-
-  if (isPrivate) {
-    alert("🚫 No podés jugar desde Safari en modo incógnito.");
-    document.body.innerHTML = "<h2 style='color: white; text-align: center; margin-top: 50px;'>🚫 No podés jugar desde Safari en modo incógnito.</h2>";
-    throw new Error("⛔ Bloqueado por Safari en incógnito");
+    alert("🚫 No podés jugar desde este navegador (modo incógnito o restringido).");
+    document.body.innerHTML = "<h2 style='color:white; text-align:center; margin-top:50px;'>🚫 Navegador no compatible.</h2>";
+    throw new Error("⛔ Bloqueado: Fingerprint no disponible (modo incógnito o restringido)");
   }
 })();
 </script>
+
   <div class="container">
     <div id="userSection">
       <h1>👑✨ CASINO ORO 💎🏆</h1>
@@ -265,12 +238,9 @@ const client = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 const hoy = new Date(Date.now() - (new Date().getTimezoneOffset() * 60000))
   .toISOString()
   .split('T')[0];
-let fingerprint = "";
 let username = "";
 let casino = "CASINO ORO"; // 👈 CAMBIALO según el casino actual
-let fpReady = FingerprintJS.load().then(fp => fp.get().then(result => {
-  fingerprint = result.visitorId;
-}));
+
 
 async function yaJugoHoy() {
   await fpReady;
