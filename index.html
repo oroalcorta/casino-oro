@@ -137,31 +137,44 @@
   </style>
 </head>
 <body>
-  <!-- ⛔️ Agregar este bloque APENAS comienza el <body>, para bloquear Safari incógnito al instante -->
 <script>
-// Bloqueo Safari navegación privada (compatible con iOS 17+)
+// ⛔ Bloqueo reforzado con console.log para debug
 (async () => {
   const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+  console.log("🧪 Navegador detectado:", navigator.userAgent);
+  console.log("🧪 ¿Es Safari?", isSafari);
+
   if (!isSafari) return;
 
   let isPrivate = false;
 
   try {
-    const fs = window.RequestFileSystem || window.webkitRequestFileSystem;
-    if (!fs) return;
-
-    await new Promise((resolve, reject) => {
-      fs(window.TEMPORARY, 100, resolve, reject);
-    });
-  } catch (_) {
+    if (!window.indexedDB) {
+      console.log("🧪 No hay indexedDB → modo incógnito probable");
+      isPrivate = true;
+    } else {
+      const db = indexedDB.open('test');
+      db.onerror = () => {
+        console.log("🧪 indexedDB da error → modo incógnito confirmado");
+        isPrivate = true;
+      };
+      db.onsuccess = () => {
+        console.log("🧪 indexedDB funciona bien → no es incógnito");
+      };
+    }
+  } catch (e) {
+    console.log("🧪 Excepción detectada en indexedDB:", e);
     isPrivate = true;
   }
 
-  if (isPrivate) {
-    alert("🚫 No podés jugar desde Safari en modo incógnito. Usá otro navegador o desactivá el modo privado.");
-    document.body.innerHTML = "<h2 style='color: white; text-align: center; margin-top: 50px;'>🚫 No podés jugar desde Safari en modo incógnito.</h2>";
-    throw new Error("⛔ Bloqueado por Safari en incógnito");
-  }
+  setTimeout(() => {
+    console.log("🧪 ¿Modo incógnito?", isPrivate);
+    if (isPrivate) {
+      alert("🚫 No podés jugar desde Safari en modo incógnito.");
+      document.body.innerHTML = "<h2 style='color: white; text-align: center; margin-top: 50px;'>🚫 No podés jugar desde Safari en modo incógnito.</h2>";
+      throw new Error("⛔ Bloqueado por Safari en incógnito");
+    }
+  }, 200); // Le damos tiempo al onsuccess o onerror
 })();
 </script>
   <div class="container">
