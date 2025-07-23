@@ -138,26 +138,27 @@
 </head>
 <body>
 <script>
-// 🚫 Bloqueo moderno y confiable de incógnito (Safari o cualquiera)
-let fingerprint = "";
-let fpListo = new Promise(async (res) => {
-  try {
-    const fp = await FingerprintJS.load();
-    const result = await fp.get();
-    fingerprint = result.visitorId;
-    console.log("🧪 Fingerprint:", fingerprint);
-    if (!fingerprint || fingerprint.length < 5) {
-      throw new Error("❌ Fingerprint no válido");
-    }
-    res();
-  } catch (e) {
-    alert("🚫 No podés jugar desde este navegador (modo incógnito o restringido).");
-    document.body.innerHTML = "<h2 style='color:white; text-align:center; margin-top:50px;'>🚫 Navegador no compatible.</h2>";
-    throw new Error("⛔ Bloqueado: Fingerprint no disponible (modo incógnito o restringido)");
-  }
-});
-</script>
+(function() {
+  const ua = navigator.userAgent || navigator.vendor || window.opera;
+  const esIOS = /iPad|iPhone|iPod/.test(ua);
+  const esSafari = /^((?!chrome|android).)*safari/i.test(ua);
 
+  if (esIOS && esSafari) {
+    // Redirigir con mensaje
+    document.body.innerHTML = `
+      <div style="text-align:center; color:white; padding:50px;">
+        <h2>🚫 Este juego no funciona en Safari</h2>
+        <p style="font-size: 1.2rem; max-width: 500px; margin: auto;">
+          Por favor abrí este link desde <strong>Google Chrome</strong> para poder jugar:
+        </p>
+        <input value="https://oroalcorta.github.io/casino-oro/" style="margin-top:20px; padding:10px; font-size:16px; width:90%;" readonly onclick="this.select()" />
+        <p style="margin-top:20px; font-size: 1rem;">Copiá el enlace y pegalo en Chrome para continuar. ¡Gracias! 🙌</p>
+      </div>
+    `;
+    throw new Error("⛔ Bloqueado en Safari iOS");
+  }
+})();
+</script>
   <div class="container">
     <div id="userSection">
       <h1>👑✨ CASINO ORO 💎🏆</h1>
@@ -238,13 +239,16 @@ const client = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 const hoy = new Date(Date.now() - (new Date().getTimezoneOffset() * 60000))
   .toISOString()
   .split('T')[0];
+let fingerprint = "";
 let username = "";
 let casino = "CASINO ORO"; // 👈 CAMBIALO según el casino actual
-
+let fpReady = FingerprintJS.load().then(fp => fp.get().then(result => {
+  fingerprint = result.visitorId;
+}));
 
 async function yaJugoHoy() {
-  await fpListo; // ✅ Esperamos hasta que fingerprint esté cargado
-
+  await fpReady;
+  while (!fingerprint) await new Promise(r => setTimeout(r, 50));
   try {
     const { data, error } = await client
       .from('giros')
