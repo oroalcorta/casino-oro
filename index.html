@@ -140,17 +140,16 @@
 <script>
 (function() {
   const ua = navigator.userAgent || navigator.vendor || window.opera;
+
   const esIOS = /iPad|iPhone|iPod/.test(ua);
-  const esSafari = /^((?!chrome|android).)*safari/i.test(ua);
+  const esSafari = /^((?!crios|fxios|chrome|edgios|opera|opios|android).)*safari/i.test(ua);
   const esMacSafari = /Macintosh/.test(ua) && esSafari;
 
   const linkNormal = "https://oroalcorta.github.io/casino-oro/";
   const linkChrome = "googlechrome://oroalcorta.github.io/casino-oro/";
 
   if ((esIOS && esSafari) || esMacSafari) {
-    // Intenta redirigir a Chrome
-    const redirigido = setTimeout(() => {
-      // Si no se redirigió, mostrar mensaje manual
+    setTimeout(() => {
       document.body.innerHTML = `
         <div style="text-align:center; color:white; padding:50px;">
           <h2>🚫 Este juego no funciona en Safari</h2>
@@ -163,10 +162,9 @@
       `;
     }, 1500);
 
-    // Intenta abrir en Chrome
+    // Intenta abrir con Chrome
     window.location.href = linkChrome;
 
-    // Cancelamos todo lo demás del juego
     throw new Error("⛔ Bloqueado en Safari");
   }
 })();
