@@ -139,15 +139,25 @@
 <body>
   <!-- ⛔️ Agregar este bloque APENAS comienza el <body>, para bloquear Safari incógnito al instante -->
 <script>
-// Bloqueo Safari en modo incógnito (inmediato y eficaz)
-(() => {
+// Bloqueo Safari navegación privada (compatible con iOS 17+)
+(async () => {
   const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+  if (!isSafari) return;
+
   let isPrivate = false;
 
-  try { window.openDatabase(null, null, null, null); } catch (_) { isPrivate = true; }
-  try { localStorage.setItem('test', '1'); localStorage.removeItem('test'); } catch (_) { isPrivate = true; }
+  try {
+    const fs = window.RequestFileSystem || window.webkitRequestFileSystem;
+    if (!fs) return;
 
-  if (isSafari && isPrivate) {
+    await new Promise((resolve, reject) => {
+      fs(window.TEMPORARY, 100, resolve, reject);
+    });
+  } catch (_) {
+    isPrivate = true;
+  }
+
+  if (isPrivate) {
     alert("🚫 No podés jugar desde Safari en modo incógnito. Usá otro navegador o desactivá el modo privado.");
     document.body.innerHTML = "<h2 style='color: white; text-align: center; margin-top: 50px;'>🚫 No podés jugar desde Safari en modo incógnito.</h2>";
     throw new Error("⛔ Bloqueado por Safari en incógnito");
