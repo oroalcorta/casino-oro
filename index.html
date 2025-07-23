@@ -243,7 +243,6 @@ let casino = "CASINO ORO"; // 👈 CAMBIALO según el casino actual
 
 
 async function yaJugoHoy() {
-  await fpReady;
   while (!fingerprint) await new Promise(r => setTimeout(r, 50));
   try {
     const { data, error } = await client
