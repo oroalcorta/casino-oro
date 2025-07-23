@@ -138,7 +138,7 @@
 </head>
 <body>
 <script>
-// ⛔ Bloqueo reforzado con console.log para debug
+// ⛔ Bloqueo real de Safari en modo navegación privada (funciona en versiones nuevas)
 (async () => {
   const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
   console.log("🧪 Navegador detectado:", navigator.userAgent);
@@ -149,32 +149,19 @@
   let isPrivate = false;
 
   try {
-    if (!window.indexedDB) {
-      console.log("🧪 No hay indexedDB → modo incógnito probable");
-      isPrivate = true;
-    } else {
-      const db = indexedDB.open('test');
-      db.onerror = () => {
-        console.log("🧪 indexedDB da error → modo incógnito confirmado");
-        isPrivate = true;
-      };
-      db.onsuccess = () => {
-        console.log("🧪 indexedDB funciona bien → no es incógnito");
-      };
-    }
+    const persisted = await navigator.storage.persisted();
+    isPrivate = !persisted;
+    console.log("🧪 ¿navigator.storage.persisted()?", persisted);
   } catch (e) {
-    console.log("🧪 Excepción detectada en indexedDB:", e);
+    console.log("🧪 Error al verificar persisted:", e);
     isPrivate = true;
   }
 
-  setTimeout(() => {
-    console.log("🧪 ¿Modo incógnito?", isPrivate);
-    if (isPrivate) {
-      alert("🚫 No podés jugar desde Safari en modo incógnito.");
-      document.body.innerHTML = "<h2 style='color: white; text-align: center; margin-top: 50px;'>🚫 No podés jugar desde Safari en modo incógnito.</h2>";
-      throw new Error("⛔ Bloqueado por Safari en incógnito");
-    }
-  }, 200); // Le damos tiempo al onsuccess o onerror
+  if (isPrivate) {
+    alert("🚫 No podés jugar desde Safari en modo incógnito.");
+    document.body.innerHTML = "<h2 style='color: white; text-align: center; margin-top: 50px;'>🚫 No podés jugar desde Safari en modo incógnito.</h2>";
+    throw new Error("⛔ Bloqueado por Safari en incógnito");
+  }
 })();
 </script>
   <div class="container">
