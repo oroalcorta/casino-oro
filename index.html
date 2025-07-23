@@ -140,22 +140,22 @@
 <script>
 // 🚫 Bloqueo moderno y confiable de incógnito (Safari o cualquiera)
 let fingerprint = "";
-(async () => {
+let fpListo = new Promise(async (res) => {
   try {
     const fp = await FingerprintJS.load();
     const result = await fp.get();
     fingerprint = result.visitorId;
-
     console.log("🧪 Fingerprint:", fingerprint);
     if (!fingerprint || fingerprint.length < 5) {
       throw new Error("❌ Fingerprint no válido");
     }
+    res();
   } catch (e) {
     alert("🚫 No podés jugar desde este navegador (modo incógnito o restringido).");
     document.body.innerHTML = "<h2 style='color:white; text-align:center; margin-top:50px;'>🚫 Navegador no compatible.</h2>";
     throw new Error("⛔ Bloqueado: Fingerprint no disponible (modo incógnito o restringido)");
   }
-})();
+});
 </script>
 
   <div class="container">
@@ -243,7 +243,8 @@ let casino = "CASINO ORO"; // 👈 CAMBIALO según el casino actual
 
 
 async function yaJugoHoy() {
-  while (!fingerprint) await new Promise(r => setTimeout(r, 50));
+  await fpListo; // ✅ Esperamos hasta que fingerprint esté cargado
+
   try {
     const { data, error } = await client
       .from('giros')
