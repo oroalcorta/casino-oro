@@ -138,26 +138,43 @@
 </head>
 <body>
 <script>
-// ⛔ Bloqueo real y afinado solo para Safari en navegación privada
+// 🛡️ Bloqueo de Safari en incógnito (reforzado y más confiable)
 (async () => {
   const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
   console.log("🧪 Navegador detectado:", navigator.userAgent);
   console.log("🧪 ¿Es Safari?", isSafari);
-
   if (!isSafari) return;
 
   let isPrivate = false;
 
   try {
-    const tempStorage = await navigator.storage.estimate();
-    console.log("🧪 Almacenamiento disponible:", tempStorage);
+    // indexedDB falla en incógnito Safari
+    const db = indexedDB.open('test');
+    let resolved = false;
 
-    // Safari privado suele tener menos de 120MB de quota
-    if (tempStorage.quota && tempStorage.quota < 120000000) {
+    db.onerror = () => {
+      if (!resolved) {
+        console.log("🧪 indexedDB da error → modo incógnito confirmado");
+        isPrivate = true;
+        resolved = true;
+      }
+    };
+
+    db.onsuccess = () => {
+      if (!resolved) {
+        console.log("🧪 indexedDB funciona bien → no es incógnito");
+        resolved = true;
+      }
+    };
+
+    // Si no responde nada en 200ms asumimos incógnito
+    await new Promise(resolve => setTimeout(resolve, 200));
+    if (!resolved) {
+      console.log("🧪 Sin respuesta de indexedDB → asumimos incógnito");
       isPrivate = true;
     }
   } catch (e) {
-    console.log("🧪 Excepción en estimate:", e);
+    console.log("🧪 Excepción:", e);
     isPrivate = true;
   }
 
